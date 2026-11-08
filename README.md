@@ -24,6 +24,6 @@ Stelle sicher, dass du [Node.js](https://nodejs.org/) (ab Version 18 oder neuer)
 
 ### 2. Projekt klonen & Abhängigkeiten installieren
 ```bash
-git clone [https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.git](https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.git)
-cd DEIN-REPO
+git clone https://github.com/KuroFinX/KuroX-Bot/tree/main
+cd KuroX-Bot
 npm install discord.js
