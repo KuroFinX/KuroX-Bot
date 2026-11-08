@@ -1,23 +1,29 @@
-# 🌸 KuroX Discord Bot
+# KuroX Discord Bot 🤖
 
-Ein multifunktionaler Discord.js-Bot, der nützliche Server-Tools mit niedlichen Anime- und Repertoires-Befehlen verbindet!
+Ein moderner, in Node.js geschriebener Discord-Bot (basierend auf `discord.js` v14), der nützliche Utility-Features wie Minecraft-Server-Statusabfragen und Profil-Tools mit Anime- und Unterhaltungs-Commands verbindet.
 
 ---
 
 ## ✨ Features
 
-- **🐾 Catgirl (`/cat`):** Holt süße Catgirl-Bilder von der Nekosia API inklusive direktem Reload-Button.
-- **🌸 Waifu & Neko (`/waifu`):** Unterstützt verschiedene Kategorien (`Waifu`, `Neko`, `Fox Girl`) mit individuellem Styling.
-- **💙 Anime-Boys (`/male`):** Zeigt Husbando-Bilder inklusive Künstler-Credits (via Nekos.best API).
-- **💢 Tsundere-Modus (`/tsundere`):** Verschenkt charmante Tsundere-Stimmungen (`blush`, `pout`, `angry`, `smug`) mit passenden Sprüchen und Bildern.
-- **🟢 Minecraft Server Status (`/mcstatus`):** Prüft in Echtzeit, ob ein Minecraft-Server online ist, zeigt Spielerzahlen, MOTD, Version und das Server-Icon an.
-- **👁️ Ephemere Nachrichten:** Jeder Befehl unterstützt eine `hidden`-Option, damit Antworten nur für dich sichtbar sind.
+* **🎮 Minecraft Server Status (`/mcstatus`):** Prüft in Echtzeit, ob dein Minecraft-Server online ist, zeigt Spielerzahlen, die aktuelle Version, MOTD und das Server-Icon an (inklusive IP-Versteck-Option).
+* **🖼️ Discord Profil-Viewer (`/discordpfp`):** Zeigt den Avatar und den Profil-Banner eines Discord-Nutzers in voller Auflösung an, mitsamt direkten Download-Links.
+* **✨ Anime & Unterhaltung:**
+  * `/cat` – Holt zufällige Catgirl-Bilder (über die Nekosia API) mit Live-Aktualisierungs-Button.
+  * `/waifu` – Zeigt Anime-Bilder wahlweise nach Kategorien (*Waifu*, *Neko*, *Fox Girl*).
+  * `/male` – Sendet zufällige Anime-Boy-Bilder inklusive Künstler-Angabe.
+  * `/tsundere` – Interaktive Tsundere-Stimmungsauswahl (*Blush*, *Pout*, *Angry*, *Smug*) mit passendem Spruch und Bild.
+* **🔒 Ephemere Antworten:** Jeder Befehl unterstützt eine `hidden`-Option, damit Antworten (auf Wunsch) nur für dich sichtbar sind.
 
 ---
 
-## 🛠️ Installation & Einrichtung
+## 🛠️ Installation & Setup
 
-1. **Repository klonen:**
-   ```bash
-   git clone https://github.com/KuroFinX/KuroX-Bot)
-   cd KuroX-Bot
+### 1. Voraussetzungen
+Stelle sicher, dass du [Node.js](https://nodejs.org/) (ab Version 18 oder neuer) auf deinem System installiert hast.
+
+### 2. Projekt klonen & Abhängigkeiten installieren
+```bash
+git clone [https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.git](https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.git)
+cd DEIN-REPO
+npm install discord.js
