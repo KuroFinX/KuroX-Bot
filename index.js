@@ -73,7 +73,7 @@ const commands = [
         .setDescription('Zeigt den Live-Status deines Minecraft-Servers an')
         .addStringOption(option =>
             option.setName('ip')
-                  .setDescription('Server IP oder Domain (Beispiel: hugosmp.net)')
+                  .setDescription('Server IP oder Domain (Beispiel: mc.zenbyte.indevs.in)')
                   .setRequired(false)
         )
         .addBooleanOption(option =>
@@ -82,6 +82,19 @@ const commands = [
                   .setRequired(false)
         )
         .addBooleanOption(option => 
+            option.setName('hidden')
+                  .setDescription('Soll die Nachricht nur für dich sichtbar sein?')
+                  .setRequired(false)
+        ),
+    new SlashCommandBuilder()
+        .setName('discordpfp')
+        .setDescription('Zeigt das Profilbild und den Banner eines Discord-Nutzers an')
+        .addUserOption(option =>
+            option.setName('target')
+                  .setDescription('Der Nutzer, dessen Profil du sehen willst')
+                  .setRequired(false)
+        )
+        .addBooleanOption(option =>
             option.setName('hidden')
                   .setDescription('Soll die Nachricht nur für dich sichtbar sein?')
                   .setRequired(false)
@@ -357,6 +370,54 @@ client.on('interactionCreate', async interaction => {
             } catch (err) {
                 console.error('MC Status Error:', err.message);
                 await interaction.editReply({ content: 'Fehler beim Abrufen des Server-Status.' });
+            }
+        }
+
+        if (interaction.commandName === 'discordpfp') {
+            const targetUser = interaction.options.getUser('target') || interaction.user;
+
+            await interaction.deferReply(replyOptions);
+            try {
+                const fetchedUser = await client.users.fetch(targetUser.id, { force: true });
+                
+                const avatarUrl = fetchedUser.displayAvatarURL({ size: 1024, extension: 'png', forceStatic: false });
+                const bannerUrl = fetchedUser.bannerURL({ size: 1024, extension: 'png', forceStatic: false });
+
+                const embed = new EmbedBuilder()
+                    .setTitle(`🖼️ Discord-Profil von ${fetchedUser.username}`)
+                    .setThumbnail(avatarUrl)
+                    .setColor(0x5865F2)
+                    .setTimestamp();
+
+                const buttons = [];
+
+                buttons.push(
+                    new ButtonBuilder()
+                        .setLabel('📥 Avatar Herunterladen')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(avatarUrl)
+                );
+
+                if (bannerUrl) {
+                    embed.setImage(bannerUrl);
+                    embed.addFields({ name: '🎨 Banner', value: 'Banner ist unten angezeigt.', inline: false });
+
+                    buttons.push(
+                        new ButtonBuilder()
+                            .setLabel('🎨 Banner Herunterladen')
+                            .setStyle(ButtonStyle.Link)
+                            .setURL(bannerUrl)
+                    );
+                } else {
+                    embed.addFields({ name: '🎨 Banner', value: 'Kein benutzerdefinierter Banner vorhanden.', inline: false });
+                }
+
+                const row = new ActionRowBuilder().addComponents(buttons);
+
+                await interaction.editReply({ embeds: [embed], components: [row] });
+            } catch (err) {
+                console.error('DiscordPFP Error:', err.message);
+                await interaction.editReply({ content: '❌ Fehler beim Abrufen des Profils.' });
             }
         }
     }
