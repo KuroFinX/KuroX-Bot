@@ -19,5 +19,5 @@ Ein multifunktionaler Discord.js-Bot, der nützliche Server-Tools mit niedlichen
 
 1. **Repository klonen:**
    ```bash
-   git clone https://github.com/KuroFinX/discord-waifu-bot/tree/main
-   cd discord-waifu-bot
+   git clone https://github.com/KuroFinX/KuroX-Bot)
+   cd KuroX-Bot
