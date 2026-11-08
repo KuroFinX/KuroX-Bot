@@ -1,23 +1,23 @@
-# 🌸 Anime & Catgirl Discord Bot
+# 🌸 KuroX Discord Bot
 
-Ein moderner Discord.js (v14) Bot zum Abrufen von zufälligen Anime- und Catgirl-Bildern inklusive Buttons zum Neu-Laden und Ephemeral-Option (nur für den Benutzer sichtbar).
+Ein multifunktionaler Discord.js-Bot, der nützliche Server-Tools mit niedlichen Anime- und Repertoires-Befehlen verbindet!
 
-## 🚀 Features
+---
 
-- **`/cat`**: Sendet ein zufälliges Catgirl-Bild (Nekosia API).
-- **`/waifu`**: Sendet ein zufälliges Anime-Bild mit wählbaren Kategorien (Waifu, Neko, Fox Girl via Nekos.life API).
-- **Interactive Reload:** Mit dem Button `🔄 Neues Bild` kann direkt in der Nachricht ein neues Bild angefordert werden.
-- **Privacy Option:** Mit dem `hidden`-Parameter kann eingestellt werden, ob das Bild nur für einen selbst oder für alle im Channel sichtbar ist.
-- **Cloudflare & SSL Safe:** Verwendet native Node.js `fetch`-Anfragen zur Vermeidung von TLS- und Cloudflare-Blockaden.
+## ✨ Features
 
-## 📦 Voraussetzungen
+- **🐾 Catgirl (`/cat`):** Holt süße Catgirl-Bilder von der Nekosia API inklusive direktem Reload-Button.
+- **🌸 Waifu & Neko (`/waifu`):** Unterstützt verschiedene Kategorien (`Waifu`, `Neko`, `Fox Girl`) mit individuellem Styling.
+- **💙 Anime-Boys (`/male`):** Zeigt Husbando-Bilder inklusive Künstler-Credits (via Nekos.best API).
+- **💢 Tsundere-Modus (`/tsundere`):** Verschenkt charmante Tsundere-Stimmungen (`blush`, `pout`, `angry`, `smug`) mit passenden Sprüchen und Bildern.
+- **🟢 Minecraft Server Status (`/mcstatus`):** Prüft in Echtzeit, ob ein Minecraft-Server online ist, zeigt Spielerzahlen, MOTD, Version und das Server-Icon an.
+- **👁️ Ephemere Nachrichten:** Jeder Befehl unterstützt eine `hidden`-Option, damit Antworten nur für dich sichtbar sind.
 
-- **Node.js** v18.0.0 oder höher
-- Discord Application & Bot Token aus dem [Discord Developer Portal](https://discord.com/developers/applications)
+---
 
-## 🛠️ Installation
+## 🛠️ Installation & Einrichtung
 
-1. Repositorium klonen oder herunterladen:
+1. **Repository klonen:**
    ```bash
-   git clone https://github.com/KuroFinX/discord-waifu-bot
-   cd discord-waifu-bot
+   git clone [https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.NAME.git](https://github.com/DEIN-BENUTZERNAME/DEIN-REPO.NAME.git)
+   cd DEIN-REPO.NAME
