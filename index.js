@@ -40,6 +40,51 @@ const commands = [
             option.setName('hidden')
                   .setDescription('Soll das Bild nur für dich sichtbar sein?')
                   .setRequired(false)
+        ),
+    new SlashCommandBuilder()
+        .setName('male')
+        .setDescription('Holt ein zufälliges Anime-Boy-Bild')
+        .addBooleanOption(option => 
+            option.setName('hidden')
+                  .setDescription('Soll das Bild nur für dich sichtbar sein?')
+                  .setRequired(false)
+        ),
+    new SlashCommandBuilder()
+        .setName('tsundere')
+        .setDescription('Holt ein Tsundere-Bild und Spruch (Zufällig oder mit Tag)')
+        .addStringOption(option =>
+            option.setName('tag')
+                  .setDescription('Wähle eine Emotion aus')
+                  .setRequired(false)
+                  .addChoices(
+                      { name: '😳 Blush', value: 'blush' },
+                      { name: '💢 Pout (Schmollen)', value: 'pout' },
+                      { name: '😤 Angry', value: 'angry' },
+                      { name: '😏 Smug', value: 'smug' }
+                  )
+        )
+        .addBooleanOption(option => 
+            option.setName('hidden')
+                  .setDescription('Soll das Bild nur für dich sichtbar sein?')
+                  .setRequired(false)
+        ),
+    new SlashCommandBuilder()
+        .setName('mcstatus')
+        .setDescription('Zeigt den Live-Status deines Minecraft-Servers an')
+        .addStringOption(option =>
+            option.setName('ip')
+                  .setDescription('Server IP oder Domain (Beispiel: hugosmp.net)')
+                  .setRequired(false)
+        )
+        .addBooleanOption(option =>
+            option.setName('show_ip')
+                  .setDescription('Soll die Server-IP im Embed angezeigt werden?')
+                  .setRequired(false)
+        )
+        .addBooleanOption(option => 
+            option.setName('hidden')
+                  .setDescription('Soll die Nachricht nur für dich sichtbar sein?')
+                  .setRequired(false)
         )
 ].map(command => command.toJSON());
 
@@ -105,6 +150,131 @@ async function createWaifuPayload(tag = 'waifu') {
     return { embeds: [embed], components: [row] };
 }
 
+// Function für Male / Husbando (Nekos.best API)
+async function createMalePayload() {
+    const response = await fetch('https://nekos.best/api/v2/husbando');
+    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+
+    const json = await response.json();
+    const item = json?.results?.[0];
+    const imageUrl = item?.url;
+    const artistName = item?.artist_name;
+
+    if (!imageUrl) return null;
+
+    const embed = new EmbedBuilder()
+        .setTitle('💙 Hier ist dein Anime-Boy-Bild!')
+        .setImage(imageUrl)
+        .setColor(0x3498db);
+
+    if (artistName) {
+        embed.setFooter({ text: `Künstler: ${artistName}` });
+    }
+
+    const button = new ButtonBuilder()
+        .setCustomId('reload_male')
+        .setLabel('🔄 Neues Bild')
+        .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(button);
+
+    return { embeds: [embed], components: [row] };
+}
+
+// Function für Tsundere (Nekos.best API mit Emotionen)
+async function createTsunderePayload(tag = null) {
+    const validTags = ['blush', 'pout', 'angry', 'smug'];
+    let selectedTag = tag;
+
+    if (!validTags.includes(selectedTag)) {
+        selectedTag = validTags[Math.floor(Math.random() * validTags.length)];
+    }
+
+    const response = await fetch(`https://nekos.best/api/v2/${selectedTag}`);
+    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+
+    const json = await response.json();
+    const item = json?.results?.[0];
+    const imageUrl = item?.url;
+
+    if (!imageUrl) return null;
+
+    const quotes = {
+        blush: "W-Was starrst du mich so an?! Das bedeutet gar nichts, Baka!",
+        pout: "Hmpf! Red nicht mit mir... Es ist absolut nicht so, als wäre ich sauer auf dich!",
+        angry: "Kannst du mich bitte in Ruhe lassen?! Du gehst mir total auf die Nerven!",
+        smug: "Heh... Sieht so aus, als wärst du komplett aufgeschmissen ohne meine Hilfe, oder?"
+    };
+
+    const tagTitles = {
+        blush: "😳 Blush",
+        pout: "💢 Pout (Schmollen)",
+        angry: "😤 Angry",
+        smug: "😏 Smug"
+    };
+
+    const embed = new EmbedBuilder()
+        .setTitle(`💗 Tsundere Modus [${tagTitles[selectedTag]}]`)
+        .setDescription(`*„${quotes[selectedTag]}”*`)
+        .setImage(imageUrl)
+        .setColor(0xe84393)
+        .setFooter({ text: `Kategorie: ${selectedTag}` });
+
+    const button = new ButtonBuilder()
+        .setCustomId(`reload_tsundere_${tag || 'random'}`)
+        .setLabel('🔄 Neues Bild')
+        .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(button);
+
+    return { embeds: [embed], components: [row] };
+}
+
+// Function für Minecraft Server Status
+async function createMcStatusPayload(targetIp = 'mc.zenbyte.indevs.in', showIp = true) {
+    const response = await fetch(`https://api.mcsrvstat.us/3/${targetIp}`);
+    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+
+    const data = await response.json();
+
+    const embed = new EmbedBuilder()
+        .setTimestamp();
+
+    if (!data.online) {
+        embed.setTitle('🔴 Minecraft Server Status')
+             .setColor(0xe74c3c)
+             .setDescription(`Der Server **${targetIp}** ist aktuell offline oder nicht erreichbar.`);
+        
+        return { embeds: [embed] };
+    }
+
+    const motdText = data.motd?.clean ? data.motd.clean.join('\n') : 'Keine MOTD verfügbar';
+    const version = data.version || 'Unbekannt';
+    const onlinePlayers = data.players?.online ?? 0;
+    const maxPlayers = data.players?.max ?? 0;
+    const iconUrl = `https://api.mcsrvstat.us/icon/${targetIp}`;
+
+    embed.setTitle('🟢 Minecraft Server Status')
+         .setColor(0x2ecc71)
+         .setThumbnail(iconUrl)
+         .addFields(
+             { name: '🌐 Server IP', value: showIp ? `\`${targetIp}\`` : '||*Versteckt*||', inline: true },
+             { name: '📦 Version', value: `\`${version}\``, inline: true },
+             { name: '👥 Spieler', value: `\`${onlinePlayers} / ${maxPlayers}\``, inline: true },
+             { name: '💬 MOTD', value: `\`\`\`${motdText}\`\`\``, inline: false }
+         )
+         .setFooter({ text: 'KuroX Minecraft Status' });
+
+    const button = new ButtonBuilder()
+        .setCustomId(`reload_mcstatus_${targetIp}_${showIp}`)
+        .setLabel('🔄 Aktualisieren')
+        .setStyle(ButtonStyle.Secondary);
+
+    const row = new ActionRowBuilder().addComponents(button);
+
+    return { embeds: [embed], components: [row] };
+}
+
 client.once('ready', async () => {
     console.log(`Eingeloggt als ${client.user.tag}!`);
 
@@ -149,6 +319,46 @@ client.on('interactionCreate', async interaction => {
                 await interaction.editReply({ content: 'Fehler beim Laden des Bildes.' });
             }
         }
+
+        if (interaction.commandName === 'male') {
+            await interaction.deferReply(replyOptions);
+            try {
+                const payload = await createMalePayload();
+                if (!payload) return interaction.editReply({ content: 'Kein Bild gefunden.' });
+                await interaction.editReply(payload);
+            } catch (err) {
+                console.error('Male Error:', err.message);
+                await interaction.editReply({ content: 'Fehler beim Laden des Anime-Boy-Bildes.' });
+            }
+        }
+
+        if (interaction.commandName === 'tsundere') {
+            const selectedTag = interaction.options.getString('tag');
+
+            await interaction.deferReply(replyOptions);
+            try {
+                const payload = await createTsunderePayload(selectedTag);
+                if (!payload) return interaction.editReply({ content: 'Kein Bild gefunden.' });
+                await interaction.editReply(payload);
+            } catch (err) {
+                console.error('Tsundere Error:', err.message);
+                await interaction.editReply({ content: 'Fehler beim Laden des Tsundere-Bildes.' });
+            }
+        }
+
+        if (interaction.commandName === 'mcstatus') {
+            const ip = interaction.options.getString('ip') || 'mc.zenbyte.indevs.in';
+            const showIp = interaction.options.getBoolean('show_ip') ?? true;
+
+            await interaction.deferReply(replyOptions);
+            try {
+                const payload = await createMcStatusPayload(ip, showIp);
+                await interaction.editReply(payload);
+            } catch (err) {
+                console.error('MC Status Error:', err.message);
+                await interaction.editReply({ content: 'Fehler beim Abrufen des Server-Status.' });
+            }
+        }
     }
 
     if (interaction.isButton()) {
@@ -170,6 +380,44 @@ client.on('interactionCreate', async interaction => {
                 if (payload) await interaction.editReply(payload);
             } catch (err) {
                 console.error('Waifu Reload Error:', err.message);
+            }
+        }
+
+        if (interaction.customId === 'reload_male') {
+            await interaction.deferUpdate();
+            try {
+                const payload = await createMalePayload();
+                if (payload) await interaction.editReply(payload);
+            } catch (err) {
+                console.error('Male Reload Error:', err.message);
+            }
+        }
+
+        if (interaction.customId.startsWith('reload_tsundere_')) {
+            const tag = interaction.customId.replace('reload_tsundere_', '');
+            const targetTag = tag === 'random' ? null : tag;
+
+            await interaction.deferUpdate();
+            try {
+                const payload = await createTsunderePayload(targetTag);
+                if (payload) await interaction.editReply(payload);
+            } catch (err) {
+                console.error('Tsundere Reload Error:', err.message);
+            }
+        }
+
+        if (interaction.customId.startsWith('reload_mcstatus_')) {
+            const restId = interaction.customId.replace('reload_mcstatus_', '');
+            const lastUnderscore = restId.lastIndexOf('_');
+            const targetIp = restId.substring(0, lastUnderscore);
+            const showIp = restId.substring(lastUnderscore + 1) === 'true';
+
+            await interaction.deferUpdate();
+            try {
+                const payload = await createMcStatusPayload(targetIp, showIp);
+                if (payload) await interaction.editReply(payload);
+            } catch (err) {
+                console.error('MC Status Reload Error:', err.message);
             }
         }
     }
